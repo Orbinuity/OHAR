@@ -231,6 +231,7 @@ function removeDuplicateStatus(array, property) {
 }
 
 function refresh_browse(zone_id, options, callback) {
+  if (!core || !core.services) { return; }
   options = Object.assign(
     {
       hierarchy: "browse",
