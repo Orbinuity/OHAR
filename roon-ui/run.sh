@@ -2,4 +2,7 @@
 bashio::log.info "Starting Roon Web Controller on port 8099"
 
 cd /roon-web-controller
-node app.js
+
+echo "const util = require('util'); util.isRegExp = util.types.isRegExp; util.isDate = util.types.isDate; util.isPromise = util.types.isPromise;" > patch.js
+
+node -r ./patch.js app.js
