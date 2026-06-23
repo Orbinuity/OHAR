@@ -1,6 +1,11 @@
 FROM ghcr.io/home-assistant/base:latest
 
-RUN apk add --no-cache --repository=http://dl-cdn.alpinelinux.org/alpine/v3.19/main/ nodejs npm
+RUN cp /etc/apk/repositories /etc/apk/repositories.bak && \
+    echo "http://dl-cdn.alpinelinux.org/alpine/v3.19/main" > /etc/apk/repositories && \
+    echo "http://dl-cdn.alpinelinux.org/alpine/v3.19/community" >> /etc/apk/repositories && \
+    apk update && \
+    apk add --no-cache nodejs npm && \
+    mv /etc/apk/repositories.bak /etc/apk/repositories
 
 WORKDIR /roon-web-controller
 
