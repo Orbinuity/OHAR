@@ -8,3 +8,5 @@ arch:
   - amd64
 ingress: true
 ingress_port: 8099
+ports:
+  8099/tcp: 8099
