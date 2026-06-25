@@ -1,11 +1,15 @@
-# Orbinuity's Home Assistant Reposetory
+# Home Assistant Roon UI
 
 [![License](https://img.shields.io/github/license/Orbinuity/OHAR)](https://orbinuity.nl/license)
 [![Last Commit](https://img.shields.io/github/last-commit/Orbinuity/OHAR)](https://github.com/Orbinuity/OHAR/commits)
-[![Language](https://img.shields.io/badge/Language-HTML-blue)](https://www.reddit.com/r/HTML/)
+![Language](https://img.shields.io/badge/Language-JavaScript-blue)
+![Language](https://img.shields.io/badge/Language-CSS-blue)
+![Language](https://img.shields.io/badge/Language-HTML-blue)
+![Language](https://img.shields.io/badge/Language-Dockerfile-blue)
+![Language](https://img.shields.io/badge/Language-Bash-blue)
 [![Made By](https://img.shields.io/badge/Made%20by-Orbinuity-teal)](https://orbinuity.nl/)
 
-The Orbinuity Reposetory for Home Assistant add-ons
+Have a full Roon UI in Home Assistant.
 
 ## License
 
