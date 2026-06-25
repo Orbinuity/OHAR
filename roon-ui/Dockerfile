@@ -7,13 +7,13 @@ RUN cp /etc/apk/repositories /etc/apk/repositories.bak && \
     apk add --no-cache nodejs npm && \
     mv /etc/apk/repositories.bak /etc/apk/repositories
 
-WORKDIR /roon-web-controller
+WORKDIR /RoonWebUI
 
-COPY roon-web-controller/package*.json ./
+COPY RoonWebUI/package*.json ./
 
 RUN npm install --production
 
-COPY roon-web-controller/ ./
+COPY RoonWebUI/ ./
 
 COPY run.sh /run.sh
 RUN chmod a+x /run.sh
