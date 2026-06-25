@@ -1,0 +1,781 @@
+/* --- UPDATE TOKENS CORE AT THE TOP OF NOWPLAYING.CSS --- */
+:root {
+    --primary-color: #3daee9;
+    --bg-main: #0c0d0e;
+    --bg-panel: #18191a;
+    --text-main: #ffffff;
+    --text-muted: #a1a2a3;
+    --text-past: rgba(255, 255, 255, 0.25); /* Translucent white for dark mode */
+    --border-color: rgba(255, 255, 255, 0.06);
+    --track-bg: rgba(255, 255, 255, 0.1);
+    --btn-bg: rgba(255, 255, 255, 0.04);
+    --queue-row-bg: rgba(255, 255, 255, 0.01);
+    --queue-active-bg: rgba(61, 174, 233, 0.08);
+    --queue-row-hover: rgba(255, 255, 255, 0.02);
+    --scrollbar-thumb: rgba(255, 255, 255, 0.12);
+}
+
+body.theme-light {
+    --bg-main: #f5f6f8;
+    --bg-panel: #ffffff;
+    --text-main: #111111;
+    --text-muted: #5f6368;
+    --text-past: rgba(0, 0, 0, 0.35); /* High-contrast legible gray for light mode */
+    --border-color: rgba(0, 0, 0, 0.05);
+    --track-bg: rgba(0, 0, 0, 0.08);
+    --btn-bg: rgba(0, 0, 0, 0.04);
+    --queue-row-bg: transparent;
+    --queue-active-bg: rgba(61, 174, 233, 0.12);
+    --queue-row-hover: rgba(0, 0, 0, 0.03);
+    --scrollbar-thumb: rgba(0, 0, 0, 0.15);
+}
+
+/* ==========================================================================
+   2. RE-MAPPED LAYOUT BOUNDARIES
+   ========================================================================== */
+
+/* Force root tags to occupy full vertical height */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: var(--bg-main) !important;
+    color: var(--text-main) !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* --- THE CLEAN LIGHT MODE FIX ---
+   Neutralizes the hidden ambient artwork elements so they can't darken light mode layouts */
+body.theme-light #coverBackground,
+body.theme-light #colorBackground {
+    display: none !important;
+    background: none !important;
+}
+
+#isPlaying {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    background-color: var(--bg-main) !important;
+    overflow: hidden;
+}
+
+/* --- DUAL COLUMN CONTENT DECK --- */
+@media screen and (orientation:landscape) {
+    #isPlaying {
+        flex-direction: row;
+        padding: 32px 40px;
+    }
+    
+    #playerLeftColumn {
+        width: 44%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        padding-right: 40px;
+        box-sizing: border-box;
+        border-right: 1px solid var(--border-color) !important;
+        overflow: hidden;
+    }
+    
+    #playerRightColumn {
+        width: 56%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        padding-left: 40px;
+        box-sizing: border-box;
+    }
+    
+    #containerCoverImage {
+        width: 100%;
+        height: 42vh;
+        max-height: 42vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-shrink: 0;
+    }
+    
+    #containerMusicInfo {
+        width: 100%;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        text-align: center;
+        overflow: hidden;
+        padding-top: 16px;
+    }
+}
+
+@media screen and (orientation:portrait) {
+    #isPlaying {
+        flex-direction: column;
+        padding: 20px;
+        overflow-y: auto;
+    }
+    #playerLeftColumn, #playerRightColumn {
+        width: 100%;
+        height: auto;
+    }
+    #containerCoverImage {
+        height: 320px;
+        margin-bottom: 20px;
+    }
+    #playerRightColumn {
+        margin-top: 40px;
+        border-top: 1px solid var(--border-color) !important;
+        padding-top: 24px;
+    }
+}
+
+/* ==========================================================================
+   3. INNER COMPONENT ACCESSIBILITY FIXES
+   ========================================================================== */
+
+.itemImage {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    border-radius: 8px;
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.3);
+}
+
+.lineMusicInfo {
+    width: 100%;
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+#line1 { font-size: clamp(20px, 2vw, 26px); color: var(--text-main) !important; font-weight: 600; }
+#line2 { font-size: clamp(15px, 1.5vw, 18px); color: var(--primary-color) !important; }
+#line3 { font-size: clamp(12px, 1.2vw, 14px); color: var(--text-muted) !important; }
+
+/* --- THE TIMELINE INTERACTIVE ACCESSIBILITY OVERHAUL --- */
+#containerTrackSeek {
+    width: 100%;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    position: relative;
+    cursor: pointer;
+    margin: 14px 0 28px 0;
+    box-sizing: border-box;
+}
+
+#trackSeek {
+    width: 100%;
+    height: 4px;
+    background-color: var(--track-bg) !important;
+    border-radius: 2px;
+    position: relative;
+    pointer-events: none;
+}
+
+#trackSeekValue {
+    height: 100%;
+    background-color: var(--primary-color);
+    border-radius: 2px;
+    width: 0%;
+    pointer-events: none;
+}
+
+#seekPosition, #seekLength {
+    position: absolute;
+    top: 18px;
+    font-size: 11px;
+    color: var(--text-muted) !important;
+    font-family: monospace;
+    pointer-events: none;
+}
+#seekPosition { left: 0; }
+#seekLength { right: 0; }
+
+/* --- HIGH CONTRAST PLAYBACK ENGINE CONTROLS --- */
+#controlsPlayer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 36px;
+    width: 100%;
+    margin: 8px 0;
+}
+
+.playerButton {
+    width: 40px;
+    height: 40px;
+    color: var(--text-muted) !important;
+    padding: 6px;
+    box-sizing: border-box;
+    background: transparent;
+    border: none;
+}
+.playerButton.buttonAvailable { color: var(--text-main) !important; }
+#controlPlayPauseStop { width: 52px; height: 52px; color: var(--text-main) !important; background: transparent; border: none; padding: 2px; }
+
+.playerButton svg, .settingsButton svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.queueMeta {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex: 1; /* FIX: Forces the container to stretch, pushing the timestamp to the far right */
+    gap: 3px;
+    overflow: hidden;
+    padding-right: 16px;
+}
+
+.queueTrackName {
+    display: block !important; /* FIX: Forces the title to take up its own line */
+    width: 100%;
+    font-size: 14px;
+    color: var(--text-main) !important; 
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.queueArtistName {
+    display: block !important; /* FIX: Forces the artist to drop below the title */
+    width: 100%;
+    font-size: 12px;
+    color: var(--text-muted) !important; 
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Zone Selector Badge Fix */
+#containerZoneList { margin: 4px 0; }
+
+/* Utilities Settings Row */
+#controlsSettings {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+    margin-top: 4px;
+}
+.settingsButton {
+    width: 44px !important; /* Increased from 32px */
+    height: 44px !important; /* Increased from 32px */
+    color: var(--text-muted) !important;
+    padding: 8px !important;
+    box-sizing: border-box;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.settingsButton:hover {
+    transform: scale(1.1); /* Nice pop effect when hovered */
+    color: var(--text-main) !important;
+}
+
+.settingsButton.buttonAvailable { color: var(--text-main) !important; }
+.settingsButton.buttonActive { color: var(--primary-color) !important; }
+
+/* --- RIGHT COLUMN: THE AUTHENTIC ROON QUEUE MATRIX --- */
+.queueHeader {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted) !important; /* Theme aware text color */
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border-color) !important; /* Theme aware border */
+    font-weight: 600;
+}
+
+/* Hide old sub-section headers since we are using 1 flat continuous list */
+.queueSectionHeader {
+    display: none !important;
+}
+
+#queueList {
+    flex-grow: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    max-height: calc(100vh - 120px);
+    
+    /* Modern standard scrollbar settings (Firefox) */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+}
+
+/* --- WEBKIT CUSTOM SCROLLBAR (Chrome, Brave, Edge, Safari) --- */
+
+/* 1. Set the overall width of the scrollbar column */
+#queueList::-webkit-scrollbar {
+    width: 6px; /* Ultra-slim modern profile */
+}
+
+/* 2. Style the background track area */
+#queueList::-webkit-scrollbar-track {
+    background: transparent; /* Seamlessly blends into the dark app background */
+}
+
+/* 3. Style the moving drag handle (thumb) */
+#queueList::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.12); /* Subtle dark gray pill */
+    border-radius: 20px; /* Gives it smooth, fully rounded Roon-style corners */
+}
+
+/* 4. Highlight the drag handle slightly when hovered */
+#queueList::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(255, 255, 255, 0.25); /* Brightens just enough to show interaction */
+}
+
+/* --- UPDATE THE QUEUEROW SELECTORS FURTHER DOWN IN NOWPLAYING.CSS --- */
+.queueRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: var(--queue-row-bg) !important;
+    border-radius: 6px;
+    border: 1px solid var(--border-color) !important;
+    transition: all 0.15s ease-in-out;
+}
+
+/* THE CONTRAST FIX: Forces past played items to follow theme-aware color rules */
+.queueRow.pastTrack {
+    opacity: 0.5 !important;
+}
+.queueRow.pastTrack .queueTrackName,
+.queueRow.pastTrack .queueArtistName,
+.queueRow.pastTrack .queueTime {
+    color: var(--text-past) !important;
+}
+
+/* --- STATE 2: WHAT IS PLAYING NOW (Active Blue Highlight) --- */
+/* --- STATE 2: WHAT IS PLAYING NOW (Active Custom Highlight) --- */
+.queueRow.nowPlayingActive {
+    background: color-mix(in srgb, var(--primary-color) 12%, transparent) !important;
+    border-left: 3px solid var(--primary-color);
+    border-radius: 0 6px 6px 0;
+    opacity: 1 !important;
+}
+.queueRow.nowPlayingActive .queueTrackName {
+    color: var(--primary-color) !important;
+    font-weight: 600;
+}
+.queueRow.nowPlayingActive .queueArtistName {
+    color: color-mix(in srgb, var(--primary-color) 70%, transparent) !important;
+}
+.queueRow.nowPlayingActive .queueTime {
+    color: var(--primary-color) !important;
+}
+
+/* --- FIX: PREMIUM SEGMENTED THEME BUTTONS --- */
+.segmented-control {
+    display: flex;
+    gap: 4px;
+    background: rgba(0, 0, 0, 0.25) !important;
+    border-radius: 12px;
+    padding: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+body.theme-light .segmented-control {
+    background: rgba(0, 0, 0, 0.08) !important;
+    border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.btn-segment {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--text-muted) !important; /* FIX: Prevents invisible white text in light mode */
+    padding: 6px 14px;
+    border-radius: 8px !important;
+    font-size: 13px;
+    font-weight: 600 !important;
+    cursor: pointer;
+    transition: all 0.15s ease-in-out;
+}
+
+.btn-segment:hover {
+    color: var(--text-main) !important;
+    background: rgba(128, 128, 128, 0.15);
+}
+
+.btn-segment.active {
+    background: var(--primary-color) !important;
+    color: #ffffff !important;
+    box-shadow: 0 2px 8px rgba(61, 174, 233, 0.3);
+}
+
+/* --- FIX: ROON-STYLE PREMIUM TOGGLE SWITCHES --- */
+.settingsSwitch {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+    vertical-align: middle;
+}
+
+/* Securely hide the ugly browser square input box */
+.settingsSwitch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    position: absolute;
+}
+
+/* 4. High-Contrast Fluid Toggle Switches */
+.settingsSlider {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(255, 255, 255, 0.16) !important; /* Visual track profile anchor */
+    transition: background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+body.theme-light .settingsSlider {
+    background-color: rgba(0, 0, 0, 0.18) !important; /* Darkened from 0.08 for visibility */
+    border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+/* Sharp Contrast White Handle Adjustments */
+.settingsSlider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: #ffffff !important;
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 50%;
+    box-sizing: border-box;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3) !important;
+}
+
+body.theme-light .settingsSlider:before {
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Checked state illumination tracks */
+.settingsSwitch input:checked + .settingsSlider {
+    background-color: var(--primary-color) !important;
+    border-color: transparent;
+}
+
+/* Slide the white knob over smoothly when checked */
+.settingsSwitch input:checked + .settingsSlider:before {
+    transform: translateX(20px);
+}
+
+/* --- FIX: ULTRA-CLEAN VOLUME RANGE SLIDER --- */
+#volumeList {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+#volumeList input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    background: transparent;
+    cursor: pointer;
+    margin: 12px 0;
+}
+
+#volumeList input[type="range"]:focus {
+    outline: none;
+}
+
+/* Slider Track Styling */
+#volumeList input[type="range"]::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.16);
+    border-radius: 3px;
+    transition: background 0.15s ease;
+}
+
+#volumeList input[type="range"]:hover::-webkit-slider-runnable-track {
+    background: rgba(255, 255, 255, 0.24);
+}
+
+/* Slider Circular Thumb Knob Styling */
+#volumeList input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 16px;
+    width: 16px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    margin-top: -5px; /* Centers knob perfectly over the 6px track height */
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+    transition: transform 0.1s ease, background-color 0.1s ease;
+}
+
+#volumeList input[type="range"]::-webkit-slider-thumb:hover {
+    background: #5dc4ff;
+    transform: scale(1.15);
+}
+
+.roonToast {
+    position: fixed;
+    bottom: -100px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--primary-color);
+    color: #ffffff;
+    padding: 14px 28px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 30px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+    z-index: 99999;
+    transition: bottom 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
+    white-space: nowrap;
+}
+
+.roonToast.show {
+    bottom: 32px;
+}
+
+/* ==========================================================================
+   TOP DECK HEADER NAVIGATION
+   ========================================================================== */
+#navLine1 {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 56px;
+    background-color: #111111; /* Standard premium dark background color */
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    z-index: 9999;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.navGroup {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.navButton {
+    background: transparent;
+    border: none;
+    color: #ffffff;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.15s ease-in-out;
+}
+
+/* SHIFT MAIN CONTENT CONTAINER DOWN */
+body {
+    padding-top: 56px !important;
+    box-sizing: border-box;
+}
+
+/* ==========================================================================
+   UNIFIED NAVBAR HEADER OVERLAY (MATCHES LIBRARY STYLING MATRIX)
+   ========================================================================== */
+#navLine1 {
+    position: fixed;
+    top: 0; left: 0; right: 0; height: 64px;
+    background-color: var(--bg-panel);
+    border-bottom: 1px solid var(--border-color);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 24px; z-index: 10000; box-sizing: border-box;
+}
+
+.navGroup { display: flex; align-items: center; gap: 12px; height: 100%; }
+
+.navButton {
+    width: 40px; height: 40px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-main);
+    border-radius: 50%; background: transparent; border: none;
+    transition: all 0.2s ease-in-out; cursor: pointer;
+}
+.navButton:hover:not(:disabled) {
+    background-color: var(--track-bg);
+}
+
+/* Grayed out disabled matrix properties */
+.navButton svg { width: 20px; height: 20px; fill: currentColor; }
+
+/* SHIFT PLAYBACK PANEL VIEWPORTS SAFELY DOWN BENEATH THE TOP BAR */
+#isPlaying {
+    padding-top: 64px !important;
+    height: calc(100% - 64px) !important;
+    box-sizing: border-box;
+}
+
+#notPlaying .idleContainer {
+    height: calc(100vh - 64px) !important;
+    margin-top: 64px !important;
+}
+
+#nowplayingZoneList, #navLine1 .buttonZoneName {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid var(--border-color) !important;
+    padding: 8px 18px !important; /* Slightly thicker pill shape */
+    margin-left: 12px;
+    border-radius: 20px;
+    font-size: 14px !important; /* FIX: !important stops the JS from resizing it */
+    color: var(--text-main) !important; /* FIX: Removes the blue, uses your theme's default text color */
+    font-weight: 600;
+    text-transform: none;
+    letter-spacing: 0.02em;
+    cursor: pointer !important;       
+    pointer-events: auto !important;
+    transition: all 0.2s ease-in-out;
+}
+
+body.theme-light #nowplayingZoneList, body.theme-light #navLine1 .buttonZoneName {
+    background: rgba(0, 0, 0, 0.04) !important;
+}
+
+#nowplayingZoneList:hover, #navLine1 .buttonZoneName:hover {
+    border-color: var(--text-muted) !important;
+    background: rgba(255, 255, 255, 0.09) !important;
+}
+
+body.theme-light #nowplayingZoneList:hover, body.theme-light #navLine1 .buttonZoneName:hover {
+    background: rgba(0, 0, 0, 0.08) !important;
+}
+
+.navButton:disabled, .navButton[disabled] { 
+    opacity: 0.25 !important; 
+    cursor: not-allowed !important; 
+    color: var(--text-muted) !important;
+    pointer-events: none !important;
+}
+
+/* ==========================================================================
+   SETTINGS MENU LAYOUT REPAIR
+   ========================================================================== */
+#overlaySettings .overlayListRow {
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    width: 100% !important;
+    padding: 12px 0 !important;
+}
+
+#overlaySettings hr {
+    display: block !important;
+    width: 100% !important;
+    border: none !important;
+    border-top: 1px solid var(--border-color) !important;
+    margin: 4px 0 !important;
+}
+
+/* ==========================================================================
+   IDLE STATE (NOTHING PLAYING) REPAIR
+   ========================================================================== */
+#notPlaying {
+    position: absolute !important;
+    top: 64px !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    display: flex; /* FIX: Removed !important so JavaScript can hide it */
+    align-items: center !important;
+    justify-content: center !important;
+    background-color: var(--bg-main) !important;
+    z-index: 50 !important;
+}
+
+.idleContainer {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    width: 100% !important;
+}
+
+.idleIconWrapper {
+    width: 80px !important;
+    height: 80px !important;
+    border-radius: 50% !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid var(--border-color) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin-bottom: 24px !important;
+    color: var(--text-muted) !important;
+}
+
+/* Forces whatever SVG icon is inside to size properly */
+.idleIconWrapper svg {
+    width: 32px !important;
+    height: 32px !important;
+    fill: currentColor !important;
+}
+
+.idleHeadline {
+    font-size: 24px !important;
+    font-weight: 600 !important;
+    color: var(--text-main) !important;
+    letter-spacing: -0.01em !important;
+    margin: 0 0 16px 0 !important;
+}
+
+/* The interactive Zone Selector Pill */
+.idleZoneButton {
+    background: rgba(255, 255, 255, 0.05) !important;
+    color: var(--primary-color) !important; /* Uses your new custom color! */
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    text-transform: none !important;
+    padding: 10px 24px !important;
+    border-radius: 20px !important;
+    border: 1px solid var(--border-color) !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease-in-out !important;
+}
+
+.idleZoneButton:hover {
+    background: color-mix(in srgb, var(--primary-color) 12%, transparent) !important;
+    border-color: var(--primary-color) !important;
+}
+
+/* Light Mode Overrides */
+body.theme-light .idleIconWrapper, 
+body.theme-light .idleZoneButton {
+    background: rgba(0, 0, 0, 0.04) !important;
+}
+
+body.theme-light .idleZoneButton:hover {
+    background: color-mix(in srgb, var(--primary-color) 15%, transparent) !important;
+}

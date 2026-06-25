@@ -1,0 +1,241 @@
+/* ==========================================================================
+   THEME-AWARE LIBRARY MATRIX DOCK
+   ========================================================================== */
+
+/* --- DYNAMIC RENDERING DESIGN TOKENS --- */
+:root {
+    --primary-color: #3daee9;
+    --bg-main: #0c0d0e;
+    --bg-panel: #17191c;
+    --bg-card: #22252a;
+    --bg-card-hover: #292e35;
+    --text-main: #ffffff;
+    --text-muted: #a1a2a3;
+    --border-color: rgba(255, 255, 255, 0.06);
+    --nav-btn-hover: rgba(255, 255, 255, 0.05);
+}
+
+body.theme-light {
+    --bg-main: #f5f6f8;
+    --bg-panel: #ffffff;
+    --bg-card: #ffffff;
+    --bg-card-hover: #eef0f3;
+    --text-main: #111111;
+    --text-muted: #5f6368;
+    --border-color: rgba(0, 0, 0, 0.06);
+    --nav-btn-hover: rgba(0, 0, 0, 0.04);
+}
+
+/* --- SYSTEM CANVAS RULES --- */
+body {
+    background-color: var(--bg-main) !important;
+    color: var(--text-main) !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    margin: 0; padding: 0; overflow: hidden;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* --- UPPER NAVBAR GRID --- */
+#navLine1 {
+    position: fixed;
+    top: 0; left: 0; right: 0; height: 64px;
+    background-color: var(--bg-panel);
+    border-bottom: 1px solid var(--border-color);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 24px; z-index: 100; box-sizing: border-box;
+}
+
+.navGroup { display: flex; align-items: center; gap: 12px; height: 100%; }
+
+.navButton {
+    width: 40px; height: 40px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-main);
+    border-radius: 50%; background: transparent; border: none;
+    transition: all 0.2s ease-in-out; cursor: pointer;
+}
+.navButton:hover:not(:disabled) {
+    background-color: var(--nav-btn-hover);
+}
+.navButton:disabled, .navButton[disabled] { 
+    opacity: 0.25 !important; 
+    cursor: not-allowed !important; 
+    color: var(--text-muted) !important;
+    pointer-events: none !important;
+}
+.navButton svg { width: 20px; height: 20px; fill: currentColor; }
+
+#navLine1 .buttonZoneName {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid var(--border-color) !important;
+    padding: 6px 16px !important;
+    margin-left: 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    color: var(--primary-color) !important; /* Forces the Roon Blue text */
+    font-weight: 600;
+    text-transform: none;
+    letter-spacing: 0.02em;
+    cursor: pointer !important;       
+    pointer-events: auto !important;
+    transition: all 0.2s ease-in-out;
+}
+
+body.theme-light #navLine1 .buttonZoneName {
+    background: rgba(0, 0, 0, 0.04) !important;
+}
+
+#navLine1 .buttonZoneName:hover {
+    border-color: var(--primary-color) !important;
+    background: rgba(61, 174, 233, 0.1) !important;
+}
+
+/* --- MAIN BROWSE PANELS --- */
+#content {
+    position: absolute;
+    top: 64px; left: 0; right: 0; bottom: 56px;
+    overflow-y: auto; padding: 40px 32px;
+    background-color: var(--bg-main); box-sizing: border-box;
+}
+
+#listContainer {
+    display: flex; align-items: center; justify-content: space-between;
+    max-width: 800px; margin: 0 auto 32px auto; gap: 24px; box-sizing: border-box;
+}
+#listTitle { font-size: 32px; font-weight: 600; color: var(--text-main); letter-spacing: -0.02em; margin: 0 0 4px 0; }
+#listSubtitle { font-size: 14px; color: var(--text-muted); }
+.listInfoImage { max-width: 140px; max-height: 140px; border-radius: 8px; object-fit: cover; box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15); }
+
+/* --- PREMIUM ROON CARD ENTRIES --- */
+#items { display: flex; flex-direction: column; gap: 10px; max-width: 800px; margin: 0 auto; }
+
+.itemListItem {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    padding: 18px 24px; width: 100%; box-sizing: border-box; text-align: left;
+    border-radius: 10px; font-size: 15px; font-weight: 500;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    cursor: pointer;
+}
+.itemListItem:hover {
+    background-color: var(--bg-card-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* Search Bar Wrapper Components */
+.searchGroup {
+    display: flex; align-items: center;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 10px; padding: 12px 20px;
+    margin: 0 auto 24px auto; max-width: 800px; box-sizing: border-box; gap: 12px;
+}
+.searchForm { background: transparent; border: none; color: var(--text-main); font-size: 16px; width: 100%; outline: none; }
+.searchForm::placeholder { color: var(--text-muted); }
+
+/* --- LOWER FOOTER NAVIGATION --- */
+#navLine2 {
+    position: fixed; bottom: 0; left: 0; right: 0; height: 56px;
+    background-color: var(--bg-panel); border-top: 1px solid var(--border-color);
+    display: flex; align-items: center; justify-content: center; z-index: 100;
+}
+#pageNumber { font-size: 13px; color: var(--text-muted); font-weight: 500; }
+
+/* ==========================================================================
+   PREMIUM APPLICATION TOAST ALERTS
+   ========================================================================== */
+.roonToast {
+    position: fixed;
+    bottom: -100px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--primary-color);
+    color: #ffffff;
+    padding: 14px 28px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 30px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+    z-index: 99999;
+    transition: bottom 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
+    white-space: nowrap;
+}
+
+.roonToast.show {
+    bottom: 32px;
+}
+
+#nowplayingZoneList, #navLine1 .buttonZoneName {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid var(--border-color) !important;
+    padding: 8px 18px !important; /* Slightly thicker pill shape */
+    margin-left: 12px;
+    border-radius: 20px;
+    font-size: 14px !important; /* FIX: !important stops the JS from resizing it */
+    color: var(--text-main) !important; /* FIX: Removes the blue, uses your theme's default text color */
+    font-weight: 600;
+    text-transform: none;
+    letter-spacing: 0.02em;
+    cursor: pointer !important;       
+    pointer-events: auto !important;
+    transition: all 0.2s ease-in-out;
+}
+
+body.theme-light #nowplayingZoneList, body.theme-light #navLine1 .buttonZoneName {
+    background: rgba(0, 0, 0, 0.04) !important;
+}
+
+#nowplayingZoneList:hover, #navLine1 .buttonZoneName:hover {
+    border-color: var(--text-muted) !important;
+    background: rgba(255, 255, 255, 0.09) !important;
+}
+
+body.theme-light #nowplayingZoneList:hover, body.theme-light #navLine1 .buttonZoneName:hover {
+    background: rgba(0, 0, 0, 0.08) !important;
+}
+
+/* ==========================================================================
+   MASTER OVERRIDES: LIBRARY ZONE PILL & OVERLAYS
+   ========================================================================== */
+/* Force overlays to appear above the fixed navbar */
+.overlay, .overlayBackground {
+    z-index: 99999 !important;
+}
+.overlayContent {
+    z-index: 100000 !important;
+}
+
+/* Force Library Zone Button to match Now Playing perfectly */
+#libraryZoneList {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid var(--border-color) !important;
+    padding: 8px 18px !important;
+    margin-left: 12px !important;
+    border-radius: 20px !important;
+    font-size: 14px !important;
+    color: var(--text-main) !important;
+    font-weight: 600 !important;
+    text-transform: none !important;
+    letter-spacing: 0.02em !important;
+    cursor: pointer !important;       
+    pointer-events: auto !important;
+    transition: all 0.2s ease-in-out !important;
+    display: inline-block !important; /* Ensures the click box exists */
+}
+
+body.theme-light #libraryZoneList {
+    background: rgba(0, 0, 0, 0.04) !important;
+}
+
+#libraryZoneList:hover {
+    border-color: var(--text-muted) !important;
+    background: rgba(255, 255, 255, 0.09) !important;
+}
+
+body.theme-light #libraryZoneList:hover {
+    background: rgba(0, 0, 0, 0.08) !important;
+}
