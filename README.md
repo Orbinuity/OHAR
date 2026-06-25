@@ -7,7 +7,7 @@
 ![Language](https://img.shields.io/badge/Language-HTML-blue)
 ![Language](https://img.shields.io/badge/Language-Dockerfile-blue)
 ![Language](https://img.shields.io/badge/Language-Bash-blue)
-[![Version](https://img.shields.io/badge/Version-1.1-orange)](https://github.com/Orbinuity/OverloadSMP/releases/v1.1)
+[![Version](https://img.shields.io/badge/Version-1.0-orange)](https://github.com/Orbinuity/OverloadSMP/releases/v1.0)
 [![Made By](https://img.shields.io/badge/Made%20by-Orbinuity-teal)](https://orbinuity.nl/)
 
 Have a full Roon UI in Home Assistant.
