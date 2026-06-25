@@ -1,8 +1,0 @@
-# Dependency directory
-node_modules
-
-# Roon Core configuration file
-config.json
-
-# Local server configuration file
-config/local.json
