@@ -1,17 +1,85 @@
+/* ==========================================================================
+   VARIABLES & THEMES
+   ========================================================================== */
+:root {
+    /* Base Palette - Dark Theme (Default) */
+    --bg-body: #17191c;
+    --bg-modal: #1e2126;
+    --bg-button: #22252a;
+    --bg-button-hover: #22252a; /* Relies on opacity in dark mode */
+    --bg-overlay: rgba(10, 11, 13, 0.85);
+
+    --text-primary: #ffffff;
+    --text-muted: #a1a2a3;
+
+    --border-default: rgba(255, 255, 255, 0.15);
+    --border-modal: rgba(255, 255, 255, 0.1);
+
+    --shadow-modal: 0 20px 40px rgba(0, 0, 0, 0.5);
+    --shadow-button: none;
+
+    --brand-primary: #00a0ff;
+    --scrollbar-thumb: rgba(255, 255, 255, 0.2);
+    
+    --backdrop-overlay: blur(10px);
+    --backdrop-modal: none;
+}
+
+body.theme-light {
+    /* Base Palette - Light Theme Overrides */
+    --bg-body: #f5f6f8;
+    --bg-modal: rgba(255, 255, 255, 0.8);
+    --bg-button: #ffffff;
+    --bg-button-hover: #eef0f3;
+    --bg-overlay: rgba(0, 0, 0, 0.3);
+
+    --text-primary: #111111;
+    --text-muted: #666666;
+
+    --border-default: rgba(0, 0, 0, 0.06);
+    --border-modal: rgba(0, 0, 0, 0.06);
+
+    --shadow-modal: 0 24px 64px rgba(0, 0, 0, 0.12);
+    --shadow-button: 0 2px 8px rgba(0, 0, 0, 0.02);
+
+    --scrollbar-thumb: rgba(0, 0, 0, 0.2);
+
+    --backdrop-overlay: blur(12px) saturate(140%);
+    --backdrop-modal: blur(24px);
+}
+
+/* ==========================================================================
+   BASE & RESET STYLES
+   ========================================================================== */
 body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    background-color: #17191c;
-    color: #ffffff;
+    background-color: var(--bg-body);
+    color: var(--text-primary);
     margin: 0;
     padding: 0;
     overflow: hidden;
+}
+
+/* Ensure global text elements inherit the theme color smoothly */
+h1, h2, h3, div, .messages {
+    color: var(--text-primary);
+}
+
+/* Core Layout Elements that share the body background */
+#libraryBrowser, 
+.section, 
+#isPlaying, 
+.overlayList, 
+.overlayListRow {
+    background-color: var(--bg-body);
+    color: var(--text-primary);
 }
 
 button {
     outline: none;
     border: none;
     background: transparent;
-    color: #ffffff;
+    color: inherit;
     cursor: pointer;
     transition: all 0.2s ease-in-out;
 }
@@ -30,93 +98,9 @@ svg {
     fill: currentColor;
 }
 
-/* Premium Roon Overlay Styling */
-.buttonOverlay {
-    min-width: 120px;
-    padding: 12px 24px;
-    font-size: 14px;
-    font-weight: 500;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 20px;
-    margin: 10px;
-    background-color: #22252a;
-    color: #ffffff;
-}
-
-.buttonSettingActive {
-    background-color: #00a0ff;
-    border-color: #00a0ff;
-    color: #ffffff;
-}
-
-.fullscreenFlex {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    display: flex;
-}
-
-.overlay {
-    display: none; /* Keeps the overlay completely invisible until JS calls .show() */
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 200;  /* Ensures it sits safely on top of your main views */
-}
-
-.overlayBackground {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(10, 11, 13, 0.85);
-    backdrop-filter: blur(10px);
-    z-index: 200;
-}
-
-.overlayContent {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: #1e2126;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    color: #ffffff;
-    width: 400px;
-    max-width: 90%;
-    border-radius: 12px;
-    padding: 24px;
-    z-index: 300;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
-    
-    max-height: 75vh;
-    overflow-y: auto;
-    box-sizing: border-box;
-    
-    scrollbar-width: thin;
-    scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
-}
-
-.overlayContent::-webkit-scrollbar {
-    width: 6px;
-}
-
-.overlayContent::-webkit-scrollbar-thumb {
-    background-color: rgba(255, 255, 255, 0.2);
-    border-radius: 10px;
-}
-
-.overlayList {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
+/* ==========================================================================
+   TYPOGRAPHY UTILITIES
+   ========================================================================== */
 .textBold {
     font-weight: 600;
     letter-spacing: -0.01em;
@@ -124,7 +108,46 @@ svg {
 
 .textSmall {
     font-size: 13px;
-    color: #a1a2a3;
+    color: var(--text-muted);
+}
+
+/* ==========================================================================
+   BUTTON COMPONENTS
+   ========================================================================== */
+.buttonOverlay {
+    min-width: 120px;
+    padding: 12px 24px;
+    font-size: 14px;
+    font-weight: 500;
+    border: 1px solid var(--border-default);
+    border-radius: 20px;
+    margin: 10px;
+    background-color: var(--bg-button);
+    color: var(--text-primary);
+    box-shadow: var(--shadow-button);
+}
+
+/* Removed opacity transition specifically for button overlays in favor of exact colors if defined */
+.buttonOverlay:hover {
+    background-color: var(--bg-button-hover);
+}
+
+.buttonSettingActive {
+    background-color: var(--brand-primary);
+    border-color: var(--brand-primary);
+    color: #ffffff; /* Explicitly white regardless of theme */
+}
+
+/* ==========================================================================
+   OVERLAY & MODAL COMPONENTS
+   ========================================================================== */
+.fullscreenFlex {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
 }
 
 #coverBackground {
@@ -141,65 +164,75 @@ svg {
     pointer-events: none;
 }
 
+.overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 200;
+}
+
+.overlayBackground {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--bg-overlay);
+    backdrop-filter: var(--backdrop-overlay);
+    z-index: 200;
+}
+
+.overlayContent {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    max-width: 90%;
+    max-height: 75vh;
+    padding: 24px;
+    border-radius: 12px;
+    box-sizing: border-box;
+    z-index: 300;
+    
+    background: var(--bg-modal);
+    backdrop-filter: var(--backdrop-modal);
+    border: 1px solid var(--border-modal);
+    color: var(--text-primary);
+    box-shadow: var(--shadow-modal);
+    
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar-thumb) transparent;
+}
+
+.overlayContent::-webkit-scrollbar {
+    width: 6px;
+}
+
+.overlayContent::-webkit-scrollbar-thumb {
+    background-color: var(--scrollbar-thumb);
+    border-radius: 10px;
+}
+
+.overlayList {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
 /* ==========================================================================
-   GLOBAL APP DECK THEME SYNCHRONIZER (CLEANUP REFACTOR)
-   ========================================================================== */
-
-body.theme-light {
-    background-color: #f5f6f8 !important;
-    color: #111111 !important;
-}
-
-/* Keeps the modal background translucent across all frames */
-body.theme-light .overlayBackground {
-    background-color: rgba(0, 0, 0, 0.3) !important;
-    backdrop-filter: blur(12px) saturate(140%) !important;
-}
-
-body.theme-light #libraryBrowser,
-body.theme-light .section,
-body.theme-light #isPlaying,
-body.theme-light .overlayList,
-body.theme-light .overlayListRow {
-    background-color: #f5f6f8 !important;
-    color: #111111 !important;
-}
-
-/* Fixes global standalone overlay content blocks */
-body.theme-light .overlayContent {
-    background: rgba(255, 255, 255, 0.8) !important;
-    backdrop-filter: blur(24px) !important;
-    color: #111111 !important;
-    border: 1px solid rgba(0, 0, 0, 0.06) !important;
-    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.12) !important;
-}
-
-/* Premium Roon Core main button overlays */
-body.theme-light .buttonOverlay {
-    background-color: #ffffff !important;
-    color: #111111 !important;
-    border: 1px solid rgba(0, 0, 0, 0.06) !important;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02) !important;
-}
-body.theme-light .buttonOverlay:hover {
-    background-color: #eef0f3 !important;
-}
-
-/* Ensure global structural typography renders correctly */
-body.theme-light h1, body.theme-light h2, body.theme-light h3,
-body.theme-light .messages, body.theme-light div {
-    color: #111111 !important;
-}
-
-/* ==========================================================================
-   PREMIUM APPLICATION TOAST ALERTS
+   TOAST ALERTS
    ========================================================================== */
 .roonToast {
     position: fixed;
     bottom: -100px;
     left: 50%;
     transform: translateX(-50%);
-    background-color: var(--primary-color); /* Authentic Roon Blue */
+    background-color: var(--brand-primary);
     color: #ffffff;
     padding: 14px 28px;
     font-size: 14px;
@@ -213,5 +246,5 @@ body.theme-light .messages, body.theme-light div {
 }
 
 .roonToast.show {
-    bottom: 32px; /* Slides smoothly into frame */
+    bottom: 32px;
 }
