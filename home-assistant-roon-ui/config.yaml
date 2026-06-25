@@ -1,6 +1,6 @@
 name: "Home Assistant Roon UI"
 description: "Have a full Roon UI in Home Assistant."
-version: "1.1"
+version: "1.0"
 slug: "home-assistant-roon-ui"
 init: false
 arch:
